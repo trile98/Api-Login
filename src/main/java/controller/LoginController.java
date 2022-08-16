@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,15 +14,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import model.NaverLoginVo;
 import model.RequestDto;
 import model.ResponseDto;
 import model.User;
+import model.UserNaverDto;
 import service.LoginService;
 
 @RestController
 public class LoginController {
-	
-
 	@Autowired
 	ResponseDto response;
 	
@@ -30,7 +34,7 @@ public class LoginController {
 	
 	Logger log = Logger.getLogger(LoginController.class);
 
-	@RequestMapping(path = "/login", method= {RequestMethod.POST, RequestMethod.GET})
+	@RequestMapping(path = "/login", method= {RequestMethod.POST})
 	ResponseDto loginProcess(@RequestBody RequestDto req) {
 		log.info("======="+req.getUsername());
 		if(req.getUsername() != null && req.getPassword()!=null){
@@ -52,29 +56,62 @@ public class LoginController {
 		return response;
 	}
 	
+	@RequestMapping(path = "/login", method= {RequestMethod.GET})
+	ResponseDto loginProcess(@RequestParam("username") String username, @RequestParam("password") String password) {
+		log.info("======="+username);
+		if(username != null && username != "" && password!=null && password != ""){
+			
+			RequestDto req = new RequestDto();
+			req.setUsername(username);
+			req.setPassword(password);
+			
+			int roleId =loginService.authenUser(req);
+			
+			if(roleId == 0) {
+				response.setSuccess(false);
+				response.setMessage("Username/ Password is not exist");
+			}else {
+				String role = loginService.authorUser(roleId);
+				response.setSuccess(true);
+				response.setMessage("Welcome "+ role);
+			}
+		}else {
+			response.setSuccess(false);
+			response.setMessage("Missing Username and Password");
+		}
+		
+		return response;
+	}
+	
+	
 	@RequestMapping(path = "/loginNaver", method= RequestMethod.GET)
-	void loginGetProcess(HttpServletRequest request , HttpServletResponse response) throws IOException {
-		log.info("====="+request.getRequestURL().toString() + "?" + request.getQueryString()+"==");
-		// Generate random strings to be used as a state token.
-		String state = generateState();
-		// Store the generated state token in the session or separate storage.
-		request.getSession().setAttribute("state", state);
-		log.info("====loginGetproccess==="+state);
+	String loginGetProcess(HttpServletRequest request ) throws IOException {
+		
+		
+		NaverLoginVo naverLogin = loginService.requestNaverLoginAcceccToken(request.getParameter("code"), request.getParameter("state"), "authorization_code");
+		
+		log.info(naverLogin.getAccess_token());
+		
+		int roleId =loginService.authenNaverUser(naverLogin);
+		
+		if(roleId == 0) {
+			UserNaverDto newUser = loginService.getUserNaverInfo(naverLogin);
+			newUser.setAccessToken(naverLogin.getAccess_token());
+			loginService.addNaverUser(newUser);
+			
+			response.setSuccess(true);
+			response.setMessage("Add new naver user successfully! Welcome User");
+			
+		}else {
+			String role = loginService.authorUser(roleId);
+			response.setSuccess(true);
+			response.setMessage("Welcome "+ role);
+		}
+		
+		log.info(response.getMessage());
+		
+		return response.getMessage();
 	}
-	
-	@RequestMapping(path = "/author", method= RequestMethod.GET)
-	void loginAuthorGetProcess(HttpServletRequest request ) {
-		log.info("=========="+request.getRequestURL().toString() + "?" + request.getQueryString());
-	}
-	
-	// Generate a state token to prevent CSRF attacks.
-	// The generated state token should be stored in the session for further verification.
-	public String generateState()
-	{
-	 SecureRandom random = new SecureRandom();
-	 return new BigInteger(130, random).toString(32);
-	}
-	
 	
 	@RequestMapping(path = "/error", method= RequestMethod.GET)
 	ResponseDto loginErrGetProcess() {

@@ -6,11 +6,14 @@
     <typeAliases>
         <typeAlias alias="User" type="model.User" />
         <typeAlias alias="RequestDto" type="model.RequestDto" />
+        <typeAlias alias="NaverLoginVo" type="model.NaverLoginVo" />
+        <typeAlias alias="UserNaverDto" type="model.UserNaverDto" />
     </typeAliases>
  
     <mappers>
         <mapper resource="sql/UserSql.xml" />
         <mapper resource="sql/UserRoleSql.xml" />
+        <mapper resource="sql/UserNaverSql.xml"/>
     </mappers>
  
 </configuration>

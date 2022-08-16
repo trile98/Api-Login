@@ -17,15 +17,15 @@ public class BeanConfig {
 		return new LoginServiceImpl();
 	}
 	
-//	@Bean
-//	public ConfigurableServletWebServerFactory webServerFactory() {
-//	    TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-//	    factory.addConnectorCustomizers(new TomcatConnectorCustomizer() {
-//	        public void customize(Connector connector) {
-//	            connector.setProperty("relaxedQueryChars", "|{}[]");
-//	        }
-//	    });
-//	    return factory;
-//	}
+	@Bean
+	public ConfigurableServletWebServerFactory webServerFactory() {
+	    TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+	    factory.addConnectorCustomizers(new TomcatConnectorCustomizer() {
+	        public void customize(Connector connector) {
+	            connector.setProperty("relaxedQueryChars", "|{}[]");
+	        }
+	    });
+	    return factory;
+	}
 
 }

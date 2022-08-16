@@ -12,5 +12,9 @@
        <result property = "username" column = "USER_USERNAME"/>
        <result property = "password" column = "USER_PASSWORD"/>
        <result property = "role" column = "USER_ROLE"/>
+       <result property = "accessToken" column = "USER_ACCESSTOKEN"/>
     </resultMap>
+    
+   
+   
 </mapper>
