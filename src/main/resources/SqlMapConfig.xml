@@ -4,16 +4,16 @@
 <configuration>
  
     <typeAliases>
-        <typeAlias alias="User" type="model.User" />
-        <typeAlias alias="RequestDto" type="model.RequestDto" />
-        <typeAlias alias="NaverLoginVo" type="model.NaverLoginVo" />
-        <typeAlias alias="UserNaverDto" type="model.UserNaverDto" />
+        <typeAlias alias="User" type="PRACTICE.Api_Login.model.User" />
+        <typeAlias alias="RequestDto" type="PRACTICE.Api_Login.model.RequestDto" />
+        <typeAlias alias="NaverLoginVo" type="PRACTICE.Api_Login.model.NaverLoginVo" />
+        <typeAlias alias="UserNaverDto" type="PRACTICE.Api_Login.model.UserNaverDto" />
     </typeAliases>
  
     <mappers>
-        <mapper resource="sql/UserSql.xml" />
-        <mapper resource="sql/UserRoleSql.xml" />
-        <mapper resource="sql/UserNaverSql.xml"/>
+        <mapper resource="PRACTICE/Api_Login/sql/UserSql.xml" />
+        <mapper resource="PRACTICE/Api_Login/sql/UserRoleSql.xml" />
+        <mapper resource="PRACTICE/Api_Login/sql/UserNaverSql.xml"/>
     </mappers>
  
 </configuration>

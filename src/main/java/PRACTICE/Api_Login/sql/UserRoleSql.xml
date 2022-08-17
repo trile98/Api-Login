@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="PRACTICE.Api_Login.repository.UserRoleRepository">
+   
+    <select id="getRole" parameterType="int" resultType="String">
+        SELECT USERROLE_ROLE FROM prac.USER_ROLE WHERE USERROLE_ID= #{id};
+    </select>
+</mapper>

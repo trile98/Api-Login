@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PRACTICE.Api_Login.repository.UserNaverRepository">
+	<resultMap id = "userResultMap" type = "UserNaverDto">
+    	<result property = "id" column = "NAVER_USER_ID"/>
+       <result property = "name" column = "NAVER_USER_NAME"/>
+       <result property = "email" column = "NAVER_USER_EMAIL"/>
+       <result property = "role" column = "NAVER_USER_ROLE"/>
+       <result property = "accessToken" column = "NAVER_USER_ACCESSTOKEN"/>
+    </resultMap>
+    
+    <select id="getNaverUser" parameterType="UserNaverDto" resultMap="userResultMap">
+        SELECT * FROM prac.NAVER_USER WHERE NAVER_USER_ID = #{id} LIMIT 1;
+    </select>
+     
+     <insert id="addNewNaverUser" parameterType="UserNaverDto">
+     	INSERT INTO prac.NAVER_USER (
+     		NAVER_USER_ID,
+     		NAVER_USER_NAME,
+     		NAVER_USER_EMAIL,
+     		NAVER_USER_ROLE,
+     		NAVER_USER_ACCESS_TOKEN
+     	)
+     	VALUES(
+     		#{id}, 
+     		#{name}, 
+     		#{email}, 
+     		2, 
+     		#{accessToken}
+     	);
+     </insert>
+</mapper>

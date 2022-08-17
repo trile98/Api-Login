@@ -6,14 +6,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
-import controller.LoginController;
+import PRACTICE.Api_Login.controller.LoginController;
 
 /**
  * Hello world!
  *
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
-@ComponentScan({"config", "controller", "model", "respository"})
 public class App 
 {
     public static void main( String[] args )
