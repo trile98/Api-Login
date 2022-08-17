@@ -38,13 +38,9 @@ public class LoginServiceImpl implements LoginService {
 	UserRoleRepository userRoleRepo;
 	
 
-	public int authenUser(RequestDto req) {
-		User user = userRepo.getUser(req);
-		log.info(user);
-		if(user != null)
-			return user.getRole();
+	public User authenUser(RequestDto req) {
+		return userRepo.getUser(req);
 		
-		return 0;
 	}
 
 	public String authorUser(int id) {

@@ -34,27 +34,7 @@ public class LoginController {
 	
 	Logger log = Logger.getLogger(LoginController.class);
 
-	@RequestMapping(path = "/login", method= {RequestMethod.POST})
-	ResponseDto loginProcess(@RequestBody RequestDto req) {
-		log.info("======="+req.getUsername());
-		if(req.getUsername() != null && req.getPassword()!=null){
-			
-			int roleId =loginService.authenUser(req);
-			
-			if(roleId == 0) {
-				response.setSuccess(false);
-				response.setMessage("Username/ Password is not exist");
-			}else {
-				String role = loginService.authorUser(roleId);
-				response.setSuccess(true);
-				response.setMessage("Welcome "+ role);
-			}
-		}else {
-			response.setSuccess(false);
-			response.setMessage("Missing Username and Password");
-		}
-		return response;
-	}
+
 	
 	@RequestMapping(path = "/login", method= {RequestMethod.GET})
 	ResponseDto loginProcess(@RequestParam("username") String username, @RequestParam("password") String password) {
@@ -65,15 +45,15 @@ public class LoginController {
 			req.setUsername(username);
 			req.setPassword(password);
 			
-			int roleId =loginService.authenUser(req);
+			User user =loginService.authenUser(req);
 			
-			if(roleId == 0) {
+			if(user == null) {
 				response.setSuccess(false);
 				response.setMessage("Username/ Password is not exist");
 			}else {
-				String role = loginService.authorUser(roleId);
+				String role = loginService.authorUser(user.getRole());
 				response.setSuccess(true);
-				response.setMessage("Welcome "+ role);
+				response.setMessage("Welcome "+ user.getUsername()+"! You are an "+role);
 			}
 		}else {
 			response.setSuccess(false);
@@ -85,32 +65,37 @@ public class LoginController {
 	
 	
 	@RequestMapping(path = "/loginNaver", method= RequestMethod.GET)
-	String loginGetProcess (@RequestParam(name = "code", required = false) String code, @RequestParam(name ="state") String state ) throws IOException {
+	String loginNaverProcess (@RequestParam(name = "code", required = false) String code, @RequestParam(name = "error", required = false) String error, @RequestParam(name = "state") String state, @RequestParam(name ="error_description", required= false) String descrip) throws IOException {
+		
+		if(error != null) {
+		
+			NaverLoginVo naverLogin = loginService.requestNaverLoginAcceccToken(code, state, "authorization_code");
+			
+			log.info(naverLogin.getAccess_token());
+			
+			
+			UserNaverDto naverUser = loginService.getUserNaverInfo(naverLogin);
+			naverUser.setAccessToken(naverLogin.getAccess_token());
+			
+			int roleId =loginService.authenNaverUser(naverUser);
+			
 	
-		
-		NaverLoginVo naverLogin = loginService.requestNaverLoginAcceccToken(code, state, "authorization_code");
-		
-		log.info(naverLogin.getAccess_token());
-		
-		
-		UserNaverDto naverUser = loginService.getUserNaverInfo(naverLogin);
-		naverUser.setAccessToken(naverLogin.getAccess_token());
-		
-		int roleId =loginService.authenNaverUser(naverUser);
-		
-		
-		
-		if(roleId == 0) {
 			loginService.addNaverUser(naverUser);
 			
 			
-			response.setSuccess(true);
-			response.setMessage("Add new naver user successfully! Welcome User");
-			
+			if(roleId == 0) {
+	
+				response.setSuccess(true);
+				response.setMessage("Add new naver user successfully! Welcome User");
+				
+			}else {
+				String role = loginService.authorUser(roleId);
+				response.setSuccess(true);
+				response.setMessage("Welcome "+ role);
+			}
 		}else {
-			String role = loginService.authorUser(roleId);
-			response.setSuccess(true);
-			response.setMessage("Welcome "+ role);
+			response.setSuccess(false);
+			response.setMessage("Login failed! Error: "+error+"---"+descrip);
 		}
 		
 		log.info(response.getMessage());
@@ -118,12 +103,5 @@ public class LoginController {
 		return response.getMessage();
 	}
 	
-	@RequestMapping(path = "/error", method= RequestMethod.GET)
-	ResponseDto loginErrGetProcess(@RequestParam(name = "error", required = false) String error, @RequestParam(name ="error_description", required= false) String descrip) {
-		log.info("======="+error+"===="+descrip+"====");
-			response.setSuccess(false);
-			response.setMessage("login fail");
-		
-		return response;
-	}
+	
 }

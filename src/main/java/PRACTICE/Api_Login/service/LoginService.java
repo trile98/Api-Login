@@ -9,7 +9,7 @@ import PRACTICE.Api_Login.model.UserNaverDto;
 
 public interface LoginService {
 	
-	int authenUser(RequestDto req);
+	User authenUser(RequestDto req);
 	String authorUser(int id);
 	NaverLoginVo requestNaverLoginAcceccToken(String code, String state, String grant_type);
 	
