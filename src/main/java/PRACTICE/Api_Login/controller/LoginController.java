@@ -67,7 +67,7 @@ public class LoginController {
 	@RequestMapping(path = "/loginNaver", method= RequestMethod.GET)
 	String loginNaverProcess (@RequestParam(name = "code", required = false) String code, @RequestParam(name = "error", required = false) String error, @RequestParam(name = "state") String state, @RequestParam(name ="error_description", required= false) String descrip) throws IOException {
 		
-		if(error != null) {
+		if(error == null) {
 		
 			NaverLoginVo naverLogin = loginService.requestNaverLoginAcceccToken(code, state, "authorization_code");
 			
