@@ -80,10 +80,11 @@ public class LoginController {
 			int roleId =loginService.authenNaverUser(naverUser);
 			
 	
-			loginService.addNaverUser(naverUser);
 			
 			
 			if(roleId == 0) {
+
+				loginService.addNaverUser(naverUser);
 	
 				response.setSuccess(true);
 				response.setMessage("Add new naver user successfully! Welcome User");
